@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title 'Dashboard' %}
+
+{% block body %}
+    <h1>Dashboard</h1>
+    <p>This is a small example app. Just a simple CRUD for products and categories.</p>
+    {% include '_flashes.html.twig' %}
+    <div class="row mt-md-4">
+        <div class="col-md-6">
+            <h2>Products</h2>
+            {% for product in products %}
+                {% if loop.first %}
+                    <ul id="products" class="list-group">
+                {% endif %}
+                <li class="list-group-item">
+                    <a href="{{ path('product_form', {'id': product.id}) }}">
+                        {{ product.name }}
+                    </a>
+                    <span class="text-muted">[{{ product.category.name }}]</span>
+                    <a class="badge badge-danger float-right" href="{{ path('product_remove', {'id': product.id}) }}">X</a>
+                </li>
+                {% if loop.last %}
+                    </ul>
+                {% endif %}
+            {% else %}
+                <div><i class="text-muted">no products found</i></div>
+            {% endfor %}
+            <a class="btn btn-primary mt-md-3" href="{{ path('product_form') }}">New Product</a>
+        </div>
+        <div class="col-md-6">
+            <h2>Categories</h2>
+            {% for category in categories %}
+                {% if loop.first %}
+                    <ul id="categories" class="list-group">
+                {% endif %}
+                <li class="list-group-item">
+                    {% if category.parent %}
+                        <span class="text-muted">{{ category.parentNames|join(' » ') ~ ' »' }}</span>
+                    {% endif %}
+                    <a href="{{ path('category_form', {'id': category.id}) }}">
+                        {{ category.name }}
+                    </a>
+                    <a class="badge badge-danger float-right" href="{{ path('category_remove', {'id': category.id}) }}">X</a>
+                </li>
+                {% if loop.last %}
+                    </ul>
+                {% endif %}
+            {% else %}
+                <div><i class="text-muted">no categories found</i></div>
+            {% endfor %}
+            <a class="btn btn-primary mt-md-3" href="{{ path('category_form') }}">New Category</a>
+        </div>
+    </div>
+{% endblock %}

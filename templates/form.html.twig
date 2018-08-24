@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title 'Form' %}
+
+{% block body %}
+    <h1>{{ app.request.attributes.get('_route')|split('_')|first|title }}</h1>
+    {{ form_start(form) }}
+        {{ form_errors(form) }}
+        {{ form_rest(form) }}
+
+        <input type="submit" value="Submit" class="btn btn-primary" />
+
+    {{ form_end(form) }}
+{% endblock %}
+
