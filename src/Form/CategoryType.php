@@ -4,7 +4,8 @@ declare(strict_types = 1);
 
 namespace App\Form;
 
-use App\Entity\Category;
+use App\Entity\Category as CategoryEntity;
+use App\Form\Dto\Category as CategoryDto;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -18,8 +19,8 @@ class CategoryType extends AbstractType
         $builder
             ->add('name')
             ->add('parent', EntityType::class, [
-                'class' => Category::class,
-                'choice_label' => function (Category $category) {
+                'class' => CategoryEntity::class,
+                'choice_label' => function (CategoryEntity $category) {
                     return $category->getName();
                 },
                 'placeholder' => 'no parent',
@@ -30,12 +31,12 @@ class CategoryType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefault('data_class', Category::class);
+        $resolver->setDefault('data_class', CategoryDto::class);
     }
 
-    private function parentLoader(?Category $category): ?\Closure
+    private function parentLoader(?CategoryDto $category): ?\Closure
     {
-        if (null === $category) {
+        if (null === $category || null === $category->id) {
             return null;
         }
 
@@ -44,7 +45,7 @@ class CategoryType extends AbstractType
 
             return $queryBuilder
                 ->where($queryBuilder->expr()->neq('category.id', ':id'))
-                ->setParameter('id', $category->getId())
+                ->setParameter('id', $category->id)
                 ->orderBy('category.name', 'ASC');
         };
     }

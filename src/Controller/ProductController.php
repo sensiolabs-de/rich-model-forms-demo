@@ -4,7 +4,8 @@ declare(strict_types = 1);
 
 namespace App\Controller;
 
-use App\Entity\Product;
+use App\Entity\Product as ProductEntity;
+use App\Form\Dto\Product as ProductDto;
 use App\Form\ProductType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -20,14 +21,16 @@ class ProductController extends AbstractController
     /**
      * @Route("{id?}", name="form", methods={"POST", "GET"})
      */
-    public function form(Request $request, Product $product = null): Response
+    public function form(Request $request, ProductEntity $product = null): Response
     {
-        $form = $this->createForm(ProductType::class, $product);
+        $form = $this->createForm(ProductType::class, ProductDto::fromEntity($product));
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var ProductDto $dto */
+            $dto = $form->getData();
             $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($form->getData());
+            $entityManager->persist($dto->toEntity($product));
             $entityManager->flush();
 
             $this->addFlash('success', 'Successfully saved');
@@ -43,7 +46,7 @@ class ProductController extends AbstractController
     /**
      * @Route("/{id}/remove", name="remove", methods={"GET"})
      */
-    public function remove(Product $category): RedirectResponse
+    public function remove(ProductEntity $category): RedirectResponse
     {
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($category);

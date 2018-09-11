@@ -4,41 +4,67 @@ declare(strict_types = 1);
 
 namespace App\Entity;
 
-use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\Exception\CategoryException;
 
 class Category
 {
-    private $id;
-
-    /**
-     * @Assert\Length(min=3)
-     */
-    private $name;
+    private $id = 0;
+    private $name = '';
     private $parent;
 
-    public function getId(): ?int
+    /**
+     * @throws CategoryException if name is not valid
+     */
+    public function __construct(string $name, Category $parent = null)
+    {
+        $this->validateName($name);
+
+        $this->name = $name;
+        $this->parent = $parent;
+    }
+
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function setName(?string $name): void
+    public function rename(string $name): void
     {
+        $this->validateName($name);
+
         $this->name = $name;
     }
 
-    public function getParent(): ?Category
+    public function hasParent(): bool
     {
+        return $this->parent !== null;
+    }
+
+    /**
+     * @throws CategoryException if category has no parent
+     */
+    public function getParent(): Category
+    {
+        if (!$this->hasParent()) {
+            throw CategoryException::hasNoParent($this);
+        }
+
         return $this->parent;
     }
 
-    public function setParent(?Category $parent): void
+    public function moveTo(Category $parent): void
     {
         $this->parent = $parent;
+    }
+
+    public function removeParent(): void
+    {
+        $this->parent = null;
     }
 
     public function getParentNames(): array
@@ -47,7 +73,8 @@ class Category
         $category = $this;
         $i = 0;
 
-        while ($parent = $category->getParent()) {
+        while ($category->hasParent()) {
+            $parent = $category->getParent();
             if (3 === $i) {
                 $names[] = '...';
                 break;
@@ -60,5 +87,12 @@ class Category
         }
 
         return $names;
+    }
+
+    private function validateName(string $name): void
+    {
+        if (strlen($name) < 3) {
+            throw CategoryException::invalidName($name);
+        }
     }
 }

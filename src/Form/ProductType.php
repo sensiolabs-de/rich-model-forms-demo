@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace App\Form;
 
 use App\Entity\Category;
-use App\Entity\Product;
+use App\Form\Dto\Product as ProductDto;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CurrencyType;
@@ -37,6 +37,6 @@ class ProductType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefault('data_class', Product::class);
+        $resolver->setDefault('data_class', ProductDto::class);
     }
 }

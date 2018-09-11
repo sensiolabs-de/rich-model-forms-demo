@@ -4,89 +4,65 @@ declare(strict_types = 1);
 
 namespace App\Entity;
 
-use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\Exception\ProductException;
 
 class Product
 {
-    private $id;
-
-    /**
-     * @Assert\Length(min=3)
-     */
-    private $name;
-
-    /**
-     * @Assert\NotBlank
-     */
+    private $id = 0;
+    private $name = '';
     private $category;
+    private $price;
 
-    /**
-     * @Assert\GreaterThan(0)
-     */
-    private $priceAmount;
+    public function __construct(string $name, Category $category, Price $price)
+    {
+        $this->validateName($name);
 
-    /**
-     * @Assert\GreaterThanOrEqual(0)
-     */
-    private $priceTax;
+        $this->name = $name;
+        $this->category = $category;
+        $this->price = $price;
+    }
 
-    /**
-     * @Assert\Currency
-     */
-    private $priceCurrency;
-
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function setName(?string $name): void
+    public function rename(string $name): void
     {
+        $this->validateName($name);
+
         $this->name = $name;
     }
 
-    public function getCategory(): ?Category
+    public function getCategory(): Category
     {
         return $this->category;
     }
 
-    public function setCategory(?Category $category): void
+    public function moveToCategory(Category $category): void
     {
         $this->category = $category;
     }
 
-    public function getPriceAmount(): ?int
+    public function getPrice(): Price
     {
-        return $this->priceAmount;
+        return $this->price;
     }
 
-    public function setPriceAmount(?int $priceAmount): void
+    public function costs(Price $price): void
     {
-        $this->priceAmount = $priceAmount;
+        $this->price = $price;
     }
 
-    public function getPriceTax(): ?int
+    private function validateName(string $name): void
     {
-        return $this->priceTax;
-    }
-
-    public function setPriceTax(?int $priceTax): void
-    {
-        $this->priceTax = $priceTax;
-    }
-
-    public function getPriceCurrency(): ?string
-    {
-        return $this->priceCurrency;
-    }
-
-    public function setPriceCurrency(?string $priceCurrency): void
-    {
-        $this->priceCurrency = $priceCurrency;
+        if (strlen($name) < 3) {
+            throw ProductException::invalidName($name);
+        }
     }
 }

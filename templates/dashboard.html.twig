@@ -35,7 +35,7 @@
                     <ul id="categories" class="list-group">
                 {% endif %}
                 <li class="list-group-item">
-                    {% if category.parent %}
+                    {% if category.hasParent %}
                         <span class="text-muted">{{ category.parentNames|join(' » ') ~ ' »' }}</span>
                     {% endif %}
                     <a href="{{ path('category_form', {'id': category.id}) }}">
