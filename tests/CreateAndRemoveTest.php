@@ -149,8 +149,8 @@ class CreateAndRemoveTest extends WebTestCase
 
         $form = $crawler->selectButton('Submit')->form();
         $form['product[name]'] = $product;
-        $form['product[priceAmount]'] = 1234;
-        $form['product[priceTax]'] = 7;
+        $form['product[price][amount]'] = 1234;
+        $form['product[price][tax]'] = 7;
 
         $categoryId = null;
         $crawler->filter('#product_category option')->each(function (Crawler $node) use ($category, &$categoryId) {
