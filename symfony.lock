@@ -107,6 +107,9 @@
             "ref": "fb7e19da7f013d0d422fa9bce16f5c510e27609b"
         }
     },
+    "sensiolabs-de/rich-model-forms-bundle": {
+        "version": "0.1-dev"
+    },
     "symfony/browser-kit": {
         "version": "v4.1.4"
     },
